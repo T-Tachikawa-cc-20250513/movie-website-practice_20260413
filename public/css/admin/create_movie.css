@@ -1,0 +1,28 @@
+.form-grid {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    border: 1px solid #ccc;
+}
+
+.form-grid .label {
+    background: #3c8dbc;
+    color: white;
+    padding: 10px;
+    border-bottom: 1px solid #fff;
+}
+
+.form-grid .input {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.form-grid input:not([type="checkbox"]),
+.form-grid select {
+    width: 100%;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
