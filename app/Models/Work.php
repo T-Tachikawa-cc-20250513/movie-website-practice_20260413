@@ -9,17 +9,20 @@ class Work extends Model
     protected $fillable = [
         'work_name',
         'category_id',
-        'genre_id',
         'release_year',
         'image_path',
         'maker_id',
-        'country_id'
+        'country_id',
+        'duration',
+        'description',
+        'release_date'
     ];
 
     public function castMembers()
-{
-    return $this->belongsToMany(Cast::class);
-}
+    {
+        return $this->belongsToMany(Cast::class)
+            ->withPivot('role_name','job_type');
+    }
     public function maker()
     {
         return $this->belongsTo(Maker::class);
@@ -35,5 +38,9 @@ class Work extends Model
     public function subscriptions()
     {
         return $this->belongsToMany(Subscription::class);
+    }
+    public function genres()
+    {
+        return $this->belongsToMany(Genre::class);
     }
 }

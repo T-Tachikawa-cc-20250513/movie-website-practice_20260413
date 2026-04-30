@@ -16,12 +16,15 @@ return new class extends Migration
             $table->string('work_name');
             // 外部キー
             $table->foreignId('category_id')->constrained();
-            $table->foreignId('genre_id')->constrained();
             $table->foreignId('maker_id')->nullable()->constrained();
             $table->foreignId('country_id')->nullable()->constrained();
             
             $table->integer('release_year')->nullable();
             $table->string('image_path')->nullable();
+
+            $table->integer('duration')->nullable();
+            $table->text('description')->nullable();
+            $table->date('release_date')->nullable();
 
             $table->timestamps();
         });

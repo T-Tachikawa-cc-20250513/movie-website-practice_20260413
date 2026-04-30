@@ -19,6 +19,12 @@ return new class extends Migration
 
             // キャストID
             $table->foreignId('cast_id')->constrained()->onDelete('cascade');
+
+            // 役名
+            $table->string('role_name')->nullable();
+            
+            $table->string('job_type')->default('actor');
+            $table->timestamps();
         });
     }
 

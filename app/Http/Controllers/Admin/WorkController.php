@@ -41,7 +41,6 @@ class WorkController extends Controller
         return view('admin.works.create', compact(
             'categories',
             'genres',
-            // 'ages',
             'casts',
             'makers',
             'countries',
@@ -60,9 +59,10 @@ class WorkController extends Controller
             'category_id',
             'release_year',
             'image_path',
-            'genre_id',
             'maker_id',
             'country_id',
+            'duration',
+            'description',
         ]);
 
         // 画像
@@ -83,11 +83,20 @@ class WorkController extends Controller
             $data['maker_id'] = $maker->id;
         }
 
+        if ($request->release_month && $request->release_day) {
+
+            $year = $request->release_year;
+
+            $data['release_date'] = $year . '-' .
+                str_pad($request->release_month, 2, '0', STR_PAD_LEFT) . '-' .
+                str_pad($request->release_day, 2, '0', STR_PAD_LEFT);
+        }
+
         $work = Work::create($data);
 
-        // キャスト
+        // キャスト・役名登録
         if ($request->cast_names) {
-            foreach ($request->cast_names as $name) {
+            foreach ($request->cast_names as $index => $name) {
 
                 $cast = Cast::where('name', $name)->first();
 
@@ -97,7 +106,60 @@ class WorkController extends Controller
                     ]);
                 }
 
-                $work->castMembers()->attach($cast->id);
+                $work->castMembers()->attach($cast->id, [
+                    'role_name' => $request->role_name[$index] ?? null,
+                    'job_type' => 'actor'
+                ]);
+            }
+        }
+
+        if (!empty($request->director_names)) {
+            foreach ($request->director_names as $name) {
+
+                $cast = Cast::where('name', $name)->first();
+
+                if (!$cast) {
+                    $cast = Cast::create([
+                        'name' => $name
+                    ]);
+                }
+
+                $work->castMembers()->attach($cast->id, [
+                    'job_type' => 'director'
+                ]);
+            }
+        }
+
+        if (!empty($request->original_names)) {
+            foreach ($request->original_names as $name) {
+
+                $cast = Cast::where('name', $name)->first();
+
+                if (!$cast) {
+                    $cast = Cast::create([
+                        'name' => $name
+                    ]);
+                }
+
+                $work->castMembers()->attach($cast->id, [
+                    'job_type' => 'original'
+                ]);
+            }
+        }
+
+        if (!empty($request->song_name)) {
+            foreach ($request->song_name as $name) {
+
+                $cast = Cast::where('name', $name)->first();
+
+                if (!$cast) {
+                    $cast = Cast::create([
+                        'name' => $name
+                    ]);
+                }
+                $work->castMembers()->attach($cast->id, [
+                    'job_type' => 'song'
+                ]);
             }
         }
         // if ($request->cast_name) {
@@ -110,6 +172,10 @@ class WorkController extends Controller
         //     }
         //     $work->castMembers()->attach($cast->id);
         // }
+
+        if ($request->genre_ids) {
+            $work->genres()->attach($request->genre_ids);
+        }
 
         // 賞
         if ($request->award_ids) {
